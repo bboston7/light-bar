@@ -1,0 +1,20 @@
+Arduino side:
+    Listen on serial port for enums
+    setSolid(color, priority) - to light bar all one color
+    setProgress(percentage, priority) - light like a progress par
+    reset() - Reset bar to blank state and priority
+    setCustom(color[], priority) - set each LED
+
+Python client:
+    Main controller that expands on basic arduino functions
+        setSolid(color, priority)
+        setProgress(partial, whole, priority)
+        setCustom(colors, priority)
+    send data over serial
+    Individual application level controllers that talk to main controller
+        failed command
+        irssi highlight
+        portage status
+        mpd progress
+        pulseaudio levels (very hard, maybe impossible with serial speed)
+        Vol up/down bar
