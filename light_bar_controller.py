@@ -1,12 +1,15 @@
 #!/usr/bin/python3
 
+""" A controller for an arduino controlled light bar """
+
 import serial
 
 PATH = '/dev/ttyACM0'
 BAUD = 115200
 
 class LightBarController(object):
-    
+    """ Represents an arduino controlled light bar over serial """
+
     def __init__(self):
         ''' Initialize the light bar '''
         object.__init__(self)
@@ -43,6 +46,7 @@ class LightBarController(object):
         self._write(color)
 
 class Operations(object):
+    """ Enum mapping light bar operations to ints """
     RESET    = 0
     SOLID    = 1
     PROGRESS = 2
