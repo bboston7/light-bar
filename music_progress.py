@@ -21,5 +21,5 @@ while True:
     current = datetime.timedelta(minutes=current.tm_min, seconds=current.tm_sec).total_seconds()
     length = datetime.timedelta(minutes=length.tm_min, seconds=length.tm_sec).total_seconds()
     bar.set_progress(int(current), int(length))
-    print(current, '/', length)
+    #print(current, '/', length)
     sleep(1)
