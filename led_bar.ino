@@ -84,7 +84,7 @@ void reset() {
  * @param num the numerator of the fraction
  * @param denom the denominator of the fraction
  */
-void setProgress(int num, int denom) {
+void setProgress(uint32_t num, uint32_t denom) {
   int color = num * 127 / denom;
   int progress = num * 64 / denom;
   for (int i = 0; i < strip.numPixels(); i++) {
@@ -133,10 +133,10 @@ void setSolid(uint32_t color) {
  * @requires colors must be exactly numberLEDs long
  * @param colors an array of colors to set the strip to
  */
-void setCustom(uint32_t colors) {
+void setCustom(uint32_t* colors) {
   for (int i = 0; i < strip.numPixels(); i++) {
     int pixel = REVERSE_STRIP ? (strip.numPixels() - 1) - i : i;
-    strip.setPixelColor(pixel, colors[i])
+    strip.setPixelColor(pixel, colors[i]);
   }
   strip.show();
 }

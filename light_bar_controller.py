@@ -4,6 +4,8 @@
 
 import serial
 
+from time import sleep
+
 PATH = '/dev/ttyACM0'
 BAUD = 115200
 
@@ -44,6 +46,20 @@ class LightBarController(object):
         ''' Set the light bar to a solid color '''
         self._write(Operations.SOLID)
         self._write(color)
+
+    def set_custom(self, colors):
+        """ Set the light bar to match a list of colors
+
+        Precondition:
+        len(colors) == len(light bar)
+
+        Keyword arguments:
+        colors -- A list of colors mapping each element to an LED in the light
+                  bar
+        """
+        self._write(Operations.CUSTOM)
+        for color in colors:
+            self._write(color)
 
 class Operations(object):
     """ Enum mapping light bar operations to ints """
