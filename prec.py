@@ -1,7 +1,8 @@
-#!/usr/bin/python3.3
+#!/usr/bin/python3
 
 import audioop
-import subprocess
+import logging
+import sys
 
 from light_bar_controller import LightBarController
 from collections import deque
@@ -12,11 +13,11 @@ total_peak = 0
 
 last = deque()
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
+
 while True:
-    try:
-        subprocess.check_output(['pacat', '-rd', 'alsa_output.pci-0000_00_1b.0.analog-stereo.monitor', '--channels=1'], timeout=.04)
-    except subprocess.TimeoutExpired as e:
-        var = e.output
+
+    var = sys.stdin.buffer.read(1024)
 
     peak = audioop.avgpp(var, 2)
     last.append(peak)
@@ -25,6 +26,14 @@ while True:
         last.popleft()
         peak = int(sum(last)/len(last))
 
-    total_peak = max(peak, total_peak)
-    bar.set_progress(peak, total_peak)
-    print(peak, '/', total_peak)
+    # In my testing, it's extreamly rare for an actual audio source to output
+    # nothing.  Thus, this is safe and we will only re-calibrate when switching
+    # songs/audio sources
+    if peak == 0 and total_peak != 0:
+        total_peak = 0
+        logging.debug('0 / 0')
+        bar.reset
+    elif peak != 0:
+        total_peak = max(peak, total_peak)
+        bar.set_progress(peak, total_peak)
+        logging.debug(str(peak) + ' / ' + str(total_peak))
