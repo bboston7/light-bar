@@ -75,7 +75,7 @@ while True:
         start_index = i * avg_num
         level = int(sum(freqs[min_index:max_index])/(max_index - min_index + 1))
         # TODO: Make this filter level configurable (removes harmonics!)
-        bar_data.append(level if level > 1 else 0)
+        bar_data.append(level if level > 5 else 0)
 
 
 
