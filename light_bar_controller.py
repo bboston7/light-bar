@@ -4,8 +4,6 @@
 
 import serial
 
-from time import sleep
-
 PATH = '/dev/ttyACM0'
 BAUD = 115200
 
@@ -22,6 +20,7 @@ class LightBarController(object):
 
     def __del__(self):
         ''' Clean up '''
+        self.reset()
         self.bar.close()
 
     def _write(self, data):
