@@ -18,7 +18,6 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 while True:
 
     var = sys.stdin.buffer.read(1024)
-    print(var)
 
     peak = audioop.avgpp(var, 2)
     last.append(peak)
