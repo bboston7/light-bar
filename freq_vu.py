@@ -79,8 +79,12 @@ class FreqVU(object):
 
             logging.debug(bar_data)
 
-            colors = map(lambda x: int(x * (0xFFFFFF / self.max_vol)), bar_data)
+            # TODO: Refine color selection
+            colors = map(lambda x: self.pallett[int(x * (len(self.pallett) / self.max_vol))], bar_data)
             self.bar.set_custom(colors)
+
+        else:
+            self.max_vol = 1
 
 class Pastel(object):
     """ Pastel color constants """
@@ -100,7 +104,7 @@ class Pastel(object):
     VIOLET_MAGENTA  = 0xBC8DBF
     MAGENTA         = 0xF49AC2
     MAGENTA_RED     = 0xF6989D
-    REVERSE_RAINBOW = [VIOLET, BLUE_VIOLET, BLUE, CYAN_BLUE, CYAN, GREEN_CYAN,
+    REVERSE_RAINBOW = [0x000000, VIOLET, BLUE_VIOLET, BLUE, CYAN_BLUE, CYAN, GREEN_CYAN,
                        GREEN, YELLOW_GREEN, PEA_GREEN, YELLOW, YELLOW_ORANGE,
                        RED_ORANGE, RED, 0xFFFFFF]
 def main():
