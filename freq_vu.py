@@ -4,17 +4,19 @@ import audioop
 import logging
 import math
 import numpy as np
+import pyfftw
 import sys
 
 from light_bar_controller import LightBarController
+from time import sleep
 
-LEVEL_FILTER = 5
+LEVEL_FILTER = 0
 
 SAMPLE_FREQUENCY = 44100
 
 # Frequency range based off of piano range
 MAX_FREQ = 4186.01
-MIN_FREQ = 27.5
+MIN_FREQ = 27.5 # TODO: This seems to be placed too high on the bar.  Investigate
 MAX_LIN_FREQ = math.log(MAX_FREQ, 2)
 MIN_LIN_FREQ = math.log(MIN_FREQ, 2)
 
@@ -96,32 +98,38 @@ class FreqVU(object):
         #       as a harmonic filter
         if level == 0:
             return 0x000000
+        index = int((level * 127) / self.max_vol)
+        '''
         index = int((level * len(self.pallett)) / self.max_vol)
         if index == len(self.pallett):
             return 0xFFFFFF
-        return self.pallett[index]
+        '''
+        return index * 0x010101
 
 class Pastel(object):
     """ Pastel color constants """
-    RED             = 0xF7977A
-    RED_ORANGE      = 0xF9AD81
-    YELLOW_ORANGE   = 0xFDC68A
-    YELLOW          = 0xFFF79A
-    PEA_GREEN       = 0xC4DF9B
-    YELLOW_GREEN    = 0xA2D39C
-    GREEN           = 0x82CA9D
-    GREEN_CYAN      = 0x7BCDC8
-    CYAN            = 0x6ECFF6
-    CYAN_BLUE       = 0x7EA7D8
-    BLUE            = 0x8493CA
-    BLUE_VIOLET     = 0x8882BE
-    VIOLET          = 0xA187BE
-    VIOLET_MAGENTA  = 0xBC8DBF
-    MAGENTA         = 0xF49AC2
-    MAGENTA_RED     = 0xF6989D
+    RED             = 0x97F77A
+    RED_ORANGE      = 0xADF981
+    YELLOW_ORANGE   = 0xC6FD8A
+    YELLOW          = 0xF7FF9A
+    PEA_GREEN       = 0xDFC49B
+    YELLOW_GREEN    = 0xD3A29C
+    GREEN           = 0xCA829D
+    GREEN_CYAN      = 0xCD7BC8
+    CYAN            = 0xCF6EF6
+    CYAN_BLUE       = 0xA77ED8
+    BLUE            = 0x9384CA
+    BLUE_VIOLET     = 0x8288BE
+    VIOLET          = 0x87A1BE
+    VIOLET_MAGENTA  = 0x8DBCBF
+    MAGENTA         = 0x9AF4C2
+    MAGENTA_RED     = 0x98F69D
     REVERSE_RAINBOW = [0x000000, VIOLET, BLUE_VIOLET, BLUE, CYAN_BLUE, CYAN, GREEN_CYAN,
                        GREEN, YELLOW_GREEN, PEA_GREEN, YELLOW, YELLOW_ORANGE,
-                       RED_ORANGE, RED, 0xFFFFFF]
+                       RED_ORANGE, RED]
+    RAINBOW         = REVERSE_RAINBOW[::-1]
+    RAINBOW.remove(0)
+    RAINBOW.insert(0, 0)
 
 class RGB(object):
     """ RGB Color constants """
@@ -131,7 +139,7 @@ class RGB(object):
     CYAN    = 0xFF00FF
     BLUE    = 0x0000FF
     MAGENTA = 0x00FFFF
-    REVERSE_RAINBOW = [MAGENTA, BLUE, CYAN, GREEN, YELLOW, RED]
+    REVERSE_RAINBOW = [0x000000, MAGENTA, BLUE, CYAN, GREEN, YELLOW, RED]
 
 
 def main():
