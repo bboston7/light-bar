@@ -31,7 +31,7 @@ class FreqVU(object):
         self.max_vol = 1
         logging.basicConfig(format='%(levelname)s:%(message)s',
                             level=logging.DEBUG)
-        self.pallett = Pastel.REVERSE_RAINBOW
+        self.pallett = RGB.REVERSE_RAINBOW
 
     def __del__(self):
         """ Clean up """
@@ -55,9 +55,11 @@ class FreqVU(object):
                 lambda x: np.sqrt(np.square(x.real) + np.square(x.imag)), ftt_data))
             freqs = freq_dist[1:int(len(freq_dist) / 2) + 1]
 
+            '''
             for level in freqs:
                 self.max_vol = max(self.max_vol, level)
-
+            print(self.max_vol)
+            '''
             # TODO: Think about setting step and max_index in the init function
             #       This may require using constants for buffer size and bits per
             #       sample
@@ -74,17 +76,30 @@ class FreqVU(object):
                 min_index = int(min_freq / step)
                 max_index = int(max_freq / step)
                 level = int(sum(freqs[min_index:max_index])/(max_index - min_index + 1))
+                self.max_vol = max(self.max_vol, level)
                 # TODO: Make this filter level configurable (removes harmonics!)
                 bar_data.append(level if level > LEVEL_FILTER else 0)
 
             logging.debug(bar_data)
+            print(self.max_vol)
 
             # TODO: Refine color selection
-            colors = map(lambda x: self.pallett[int(x * (len(self.pallett) / self.max_vol))], bar_data)
+            colors = map(lambda x: self._get_color(x), bar_data)
             self.bar.set_custom(colors)
 
-        else:
+        elif self.max_vol != 1:
             self.max_vol = 1
+            self.bar.reset()
+
+    def _get_color(self, level):
+        # TODO: Play around with disabling this on an expanded pallet to act
+        #       as a harmonic filter
+        if level == 0:
+            return 0x000000
+        index = int((level * len(self.pallett)) / self.max_vol)
+        if index == len(self.pallett):
+            return 0xFFFFFF
+        return self.pallett[index]
 
 class Pastel(object):
     """ Pastel color constants """
@@ -107,6 +122,18 @@ class Pastel(object):
     REVERSE_RAINBOW = [0x000000, VIOLET, BLUE_VIOLET, BLUE, CYAN_BLUE, CYAN, GREEN_CYAN,
                        GREEN, YELLOW_GREEN, PEA_GREEN, YELLOW, YELLOW_ORANGE,
                        RED_ORANGE, RED, 0xFFFFFF]
+
+class RGB(object):
+    """ RGB Color constants """
+    RED     = 0x00FF00
+    YELLOW  = 0xFFFF00
+    GREEN   = 0xFF0000
+    CYAN    = 0xFF00FF
+    BLUE    = 0x0000FF
+    MAGENTA = 0x00FFFF
+    REVERSE_RAINBOW = [MAGENTA, BLUE, CYAN, GREEN, YELLOW, RED]
+
+
 def main():
     """ main function runs the program """
     freq_vu = FreqVU()
