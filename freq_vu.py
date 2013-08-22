@@ -6,11 +6,11 @@ import math
 import numpy as np
 import pyfftw
 import sys
+import threading
 
 from light_bar_controller import LightBarController
-from time import sleep
 
-LEVEL_FILTER = 0
+LEVEL_FILTER = -2
 
 SAMPLE_FREQUENCY = 44100
 
@@ -19,6 +19,8 @@ MAX_FREQ = 4186.01
 MIN_FREQ = 27.5 # TODO: This seems to be placed too high on the bar.  Investigate
 MAX_LIN_FREQ = math.log(MAX_FREQ, 2)
 MIN_LIN_FREQ = math.log(MIN_FREQ, 2)
+
+FUDGE_RANGE = True
 
 class FreqVU(object):
     """
@@ -32,8 +34,14 @@ class FreqVU(object):
         self.bar = LightBarController()
         self.max_vol = 1
         logging.basicConfig(format='%(levelname)s:%(message)s',
-                            level=logging.DEBUG)
+                            level=logging.INFO)
         self.pallett = RGB.REVERSE_RAINBOW
+        pyfftw.interfaces.cache.enable()
+        self.audio_16 = pyfftw.n_byte_align_empty(4096, 16, 'float64')
+        self.fftw = pyfftw.builders.fft(self.audio_16, overwrite_input=True, planner_effort='FFTW_PATIENT', avoid_copy=True, threads=1, auto_align_input=True, auto_contiguous=True)
+        logging.info("Wisdom: " + str(pyfftw.export_wisdom()))
+        logging.warn("Updated wisdom, restart audio for accurate data")
+        self.audio_16 = np.zeros_like(self.fftw.get_input_array())
 
     def __del__(self):
         """ Clean up """
@@ -44,18 +52,17 @@ class FreqVU(object):
         sys.stdout.flush()
         # pylint: disable=E1101
         audio = sys.stdin.buffer.read(4096)
-        audio_16 = []
         # Join bytes
         for i in range(int(len(audio)/2)):
-            audio_16.append(audioop.getsample(audio, 2, i) / 32768)
+            self.audio_16[i] = audioop.getsample(audio, 2, i) / 32768
 
         # Fourier transformation
         # TODO: Better variable names?
-        ftt_data = np.fft.fft(audio_16)
+        self.fftw.update_arrays(self.audio_16, self.fftw.get_output_array())
+        ftt_data = self.fftw()
         if ftt_data[0]:
-            freq_dist = list(map(
-                lambda x: np.sqrt(np.square(x.real) + np.square(x.imag)), ftt_data))
-            freqs = freq_dist[1:int(len(freq_dist) / 2) + 1]
+            freqs = list(map(
+                lambda x: np.sqrt(np.square(x.real) + np.square(x.imag)), ftt_data[1:int(len(ftt_data) / 2) + 1]))
 
             '''
             for level in freqs:
@@ -65,7 +72,7 @@ class FreqVU(object):
             # TODO: Think about setting step and max_index in the init function
             #       This may require using constants for buffer size and bits per
             #       sample
-            step = SAMPLE_FREQUENCY / len(freq_dist)
+            step = SAMPLE_FREQUENCY / len(ftt_data)
             max_index = int(math.ceil(MAX_FREQ / step))
             freqs = freqs[:max_index]
             log_step = (MAX_LIN_FREQ - MIN_LIN_FREQ) / 64
@@ -77,13 +84,22 @@ class FreqVU(object):
                 max_freq = 2 ** ((i + 1) * log_step + MIN_LIN_FREQ)
                 min_index = int(min_freq / step)
                 max_index = int(max_freq / step)
-                level = int(sum(freqs[min_index:max_index])/(max_index - min_index + 1))
-                self.max_vol = max(self.max_vol, level)
-                # TODO: Make this filter level configurable (removes harmonics!)
-                bar_data.append(level if level > LEVEL_FILTER else 0)
+                if FUDGE_RANGE and max_index == min_index:
+                    bar_data.append(None)
+                else:
+                    level = int(sum(freqs[min_index:max_index])/(max_index - min_index + 1))
+                    check_index = 1
+                    while i - check_index >= 0 and bar_data[i - check_index] == None:
+                        prev_level = level - check_index
+                        bar_data[i - check_index] = prev_level if prev_level > 0 else 0
+                        check_index += 1
+
+                    self.max_vol = max(self.max_vol, level)
+                    # TODO: Make this filter level configurable (removes harmonics!)
+                    bar_data.append(level if level > LEVEL_FILTER else 0)
 
             logging.debug(bar_data)
-            print(self.max_vol)
+            logging.debug("max_vol: " + str(self.max_vol))
 
             # TODO: Refine color selection
             colors = map(lambda x: self._get_color(x), bar_data)
