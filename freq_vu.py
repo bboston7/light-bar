@@ -38,6 +38,7 @@ class FreqVU(object):
         self.pallett = RGB.REVERSE_RAINBOW
         pyfftw.interfaces.cache.enable()
         self.audio_16 = pyfftw.n_byte_align_empty(4096, 16, 'float64')
+        # TODO: Play around with saving and changing planner effort
         self.fftw = pyfftw.builders.fft(self.audio_16, overwrite_input=True, planner_effort='FFTW_PATIENT', avoid_copy=True, threads=1, auto_align_input=True, auto_contiguous=True)
         logging.info("Wisdom: " + str(pyfftw.export_wisdom()))
         logging.warn("Updated wisdom, restart audio for accurate data")
