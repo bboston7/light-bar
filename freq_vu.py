@@ -10,7 +10,7 @@ import threading
 
 from light_bar_controller import LightBarController
 
-LEVEL_FILTER = -2
+LEVEL_FILTER = 0
 
 SAMPLE_FREQUENCY = 44100
 
