@@ -16,7 +16,7 @@ SAMPLE_FREQUENCY = 44100
 
 # Frequency range based off of piano range
 MAX_FREQ = 4186.01
-MIN_FREQ = 27.5 # TODO: This seems to be placed too high on the bar.  Investigate
+MIN_FREQ = 27.5
 MAX_LIN_FREQ = math.log(MAX_FREQ, 2)
 MIN_LIN_FREQ = math.log(MIN_FREQ, 2)
 
