@@ -16,8 +16,8 @@ the program has "heard" so far.  The light-bar is really better seen than
 explained, so please view the videos below if you are interested.
 Unfortunately, they are kind of quiet, so be sure to turn the volume up.
 
-[Radiohead - 15 Steps](http://www.youtube.com/watch?v=so0d3kgLeVM)
-[Sakamoto - Bolerish](http://www.youtube.com/watch?v=Mk16R0fIXag)
+- [Radiohead - 15 Steps](http://www.youtube.com/watch?v=so0d3kgLeVM)
+- [Sakamoto - Bolerish](http://www.youtube.com/watch?v=Mk16R0fIXag)
 
 Important Files
 ---------------
@@ -42,7 +42,7 @@ do it.
     fits into 64 slots, one for each LED.  Lastly, the brightness of the LEDs
     is normalized to the loudest sound the program has "heard" so far.  This
     program also supports colors, but I found that varying the brightness of a
-    white light from 1 to 127 was ultimately more informative and visually
+    white light from 0 to 127 was ultimately more informative and visually
     appealing.  The program can be customized by editing the following global
     variables:
       * LEVEL_FILTER: This sets a minimum volume for a frequency to be
@@ -70,7 +70,7 @@ Since my goal for this project was accomplished, development has slowed down a
 bit.  However, this is what I may implement in the future
 - Offloading Fourier transformation onto the GPU using open_cl
 - Taking command line arguments rather than relying on global variables
-- Rewriting in C/C++, which seem to have better support for Fast Fourier
+- Rewriting in C/C++, which seems to have better support for Fast Fourier
     Transformations as well as open_cl libraries.
 
 Pull Requests
