@@ -42,7 +42,7 @@ do it.
     fits into 64 slots, one for each LED.  Lastly, the brightness of the LEDs
     is normalized to the loudest sound the program has "heard" so far.  This
     program also supports colors, but I found that varying the brightness of a
-    white light from 0 to 127 was ultimately more informative and visually
+    white light from 0 to 255 was ultimately more informative and visually
     appealing.  The program can be customized by editing the following global
     variables:
       * LEVEL_FILTER: This sets a minimum volume for a frequency to be

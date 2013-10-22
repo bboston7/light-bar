@@ -115,7 +115,7 @@ class FreqVU(object):
         #       as a harmonic filter
         if level == 0:
             return 0x000000
-        index = int((level * 127) / self.max_vol)
+        index = int((level * 0xFF) / self.max_vol)
         '''
         index = int((level * len(self.pallett)) / self.max_vol)
         if index == len(self.pallett):
