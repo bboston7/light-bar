@@ -1,3 +1,5 @@
+#pragma once
+
 typedef int light_bar;
 
 /**
@@ -26,7 +28,7 @@ int lb_close(light_bar fd);
  * Returns
  *     fd
  */
-int lb_reset(light_bar fd);
+light_bar lb_reset(light_bar fd);
 
 /**
  * Make light bar act like a progress bar
@@ -38,4 +40,30 @@ int lb_reset(light_bar fd);
  * Returns
  *     fd
  */
-int set_progress(light_bar fd, int numerator, int denominator);
+light_bar set_progress(light_bar fd, uint32_t numerator, uint32_t denominator);
+
+/**
+ * Set the light bar to a solid color
+ *
+ * Parameters
+ *     fd    - light bar to alter
+ *     color - color to set bar to
+ * Returns
+ *     fd
+ */
+light_bar set_solid(light_bar fd, uint32_t color);
+
+/**
+ * Set the light bar to match a list of colors
+ *
+ * Requires
+ *     size == length of light bar
+ * Parameters
+ *     fd     - light bar to alter
+ *     colors - array of colors mapping each element to an LED in the light bar
+ *     size   - size of colors array
+ * Returns
+ *     fd
+ *
+ */
+light_bar set_custom(light_bar fd, uint32_t *colors, size_t size);
