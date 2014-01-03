@@ -110,9 +110,7 @@ light_bar set_solid(light_bar fd, uint32_t color) {
 light_bar set_custom(light_bar fd, uint32_t *colors, size_t size) {
     int res = lb_write(fd, &CUSTOM, 4);
     assert(res == 4);
-    for (size_t i = 0; i < size; ++i) {
-        res = lb_write(fd, colors+i, 4);
-        assert(res == 4);
-    }
+    res = lb_write(fd, colors, size * 4);
+    assert(res == size * 4);
     return fd;
 }
