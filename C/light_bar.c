@@ -53,16 +53,16 @@ int lb_close(light_bar fd) {
 }
 
 /**
- * Writes data out to the light bar
+ * Write until all bytes written or fatal error
  *
  * Parameters
- *     fd   - light_bar descriptor
+ *     fd   - file descriptor to write to
  *     data - pointer to data buffer to be written out
  *     size - bytes to write out
  * Returns
  *     Number of bytes written or -1 if an error occurred
  */
-static ssize_t lb_write(light_bar fd, const void *data, size_t size) {
+static ssize_t persistent_write(int fd, const void *data, size_t size) {
     ssize_t res, written;
     written = 0;
     while (written < size) {
@@ -76,43 +76,50 @@ static ssize_t lb_write(light_bar fd, const void *data, size_t size) {
     return written;
 }
 
+/**
+ * Writes data out to the light bar
+ *
+ * Parameters
+ *     fd   - light_bar descriptor
+ *     data - pointer to data buffer to be written out
+ *     size - bytes to write out
+ * Returns
+ *     Number of bytes written
+ */
+static ssize_t lb_write(light_bar fd, const void *data, size_t size) {
+    int ret = persistent_write(fd, data, size);
+    assert(ret == size);
+    ret += persistent_write(fd, "\n", 1);
+    assert(ret == size + 1);
+    return ret;
+}
+
 light_bar lb_reset(light_bar fd) {
-    int res = lb_write(fd, &RESET, 4);
-    assert(res == 4);
+    lb_write(fd, &RESET, 4);
     return fd;
 }
 
 light_bar set_progress(light_bar fd, uint32_t numerator, uint32_t denominator) {
-    ssize_t res;
-    res = lb_write(fd, &PROGRESS, 4);
-    assert(res == 4);
+    lb_write(fd, &PROGRESS, 4);
     lb_write(fd, &numerator, 4);
-    assert(res == 4);
     lb_write(fd, &denominator, 4);
-    assert(res == 4);
-    return fd;
-}
+    return fd; }
 
 light_bar set_random(light_bar fd) {
-    int res = lb_write(fd, &RANDOM, 4);
-    assert(res == 4);
+    lb_write(fd, &RANDOM, 4);
     return fd;
 }
 
 light_bar set_solid(light_bar fd, uint32_t color) {
-    int res = lb_write(fd, &SOLID, 4);
-    assert(res == 4);
-    res = lb_write(fd, &color, 4);
-    assert(res == 4);
+    lb_write(fd, &SOLID, 4);
+    lb_write(fd, &color, 4);
     return fd;
 }
 
 light_bar set_custom(light_bar fd, uint32_t *colors, size_t size) {
-    int res = lb_write(fd, &CUSTOM, 4);
-    assert(res == 4);
+    lb_write(fd, &CUSTOM, 4);
     for (size_t i = 0; i < size; ++i) {
-        res = lb_write(fd, colors+i, 4);
-        assert(res == 4);
+        lb_write(fd, colors+i, 4);
     }
     return fd;
 }
