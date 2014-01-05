@@ -1,8 +1,10 @@
 CC = gcc
-CFLAGS = -g -O2 -Wall -std=gnu11 -D NDEBUG
-#CFLAGS = -g -Wall -std=gnu11
+CFLAGS = -g -Wall -std=gnu11
 
 all: clear freq_vu prog_test solid_white
+
+fast: CFLAGS += -O2 -D NDEBUG
+fast: all
 
 clear: clear.c light_bar.o
 	$(CC) $(CFLAGS) -o clear clear.c light_bar.o

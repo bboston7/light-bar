@@ -52,13 +52,8 @@ void loop() {
     setProgress(num, denom);
   } else if (option == RANDOM)
     setRandom();
-  else if (option == CUSTOM) {
-    uint32_t colors[strip.numPixels()];
-    for (int i = 0; i < strip.numPixels(); i++) {
-      colors[i] = getLong();
-    }
-    setCustom(colors);
-  }
+  else if (option == CUSTOM)
+    setCustom();
 }
 
 /*
@@ -136,10 +131,10 @@ void setSolid(uint32_t color) {
  * @requires colors must be exactly numberLEDs long
  * @param colors an array of colors to set the strip to
  */
-void setCustom(uint32_t* colors) {
+void setCustom() {
   for (int i = 0; i < strip.numPixels(); i++) {
     int pixel = REVERSE_STRIP ? (strip.numPixels() - 1) - i : i;
-    strip.setPixelColor(pixel, colors[i]);
+    strip.setPixelColor(pixel, getLong());
   }
   strip.show();
 }
