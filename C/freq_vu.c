@@ -9,7 +9,7 @@
 #include "light_bar.h"
 
 #define BAR_SIZE 64
-#define LEVEL_FILTER 0
+#define LEVEL_FILTER 1
 #define SAMPLE_FREQUENCY 44100
 #define FFT_LEN 8192
 #define SAMPLE_SIZE 2
@@ -106,6 +106,7 @@ void print_arrc(double complex *arr) {
 }
 
 void update(state *this) {
+    // TODO: Separate input and output arrays so there is no need to clear
     memset(this->data, 0, sizeof(fftw_complex) * FFT_LEN);
     int res;
     // Read and process sample from stdin
@@ -191,6 +192,7 @@ void update(state *this) {
 
 int main(void) {
     printf("Initializing state...");
+    fflush(stdout);
     state this = init();
     printf("done\n");
     while (1) {
