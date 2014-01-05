@@ -4,7 +4,7 @@
 
 #define RUNS 100
 
-int main() {
+int main(void) {
     light_bar lb = lb_connect();
 
     for (int i = 0; i <= RUNS; ++i) {
@@ -13,4 +13,6 @@ int main() {
         usleep(100000);
     }
     lb_close(lb);
+
+    return 0;
 }
