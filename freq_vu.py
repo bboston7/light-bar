@@ -74,6 +74,7 @@ class FreqVU(object):
             #       This may require using constants for buffer size and bits per
             #       sample
             step = SAMPLE_FREQUENCY / len(ftt_data)
+            print(step);
             max_index = int(math.ceil(MAX_FREQ / step))
             freqs = freqs[:max_index]
             log_step = (MAX_LIN_FREQ - MIN_LIN_FREQ) / 64
