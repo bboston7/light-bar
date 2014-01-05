@@ -1,7 +1,10 @@
 CC = gcc
 CFLAGS = -g -Wall -std=gnu11
 
-all: solid_white
+all: prog_test solid_white
+
+prog_test: prog_test.c light_bar.o
+	$(CC) $(CFLAGS) -o prog_test prog_test.c light_bar.o
 
 solid_white: solid_white.c light_bar.o
 	$(CC) $(CFLAGS) -o solid_white solid_white.c light_bar.o
