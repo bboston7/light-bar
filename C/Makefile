@@ -1,6 +1,6 @@
 CC = gcc
-#CFLAGS = -g -O3 -Wall -std=gnu11
-CFLAGS = -g -Wall -std=gnu11
+CFLAGS = -g -O3 -Wall -std=gnu11 -D NDEBUG
+#CFLAGS = -g -Wall -std=gnu11
 
 all: clear freq_vu prog_test solid_white
 

@@ -77,7 +77,6 @@ double sum(double *arr, int mindex, int maxdex) {
  * Get the appropriate color for the level
  */
 uint32_t get_color(state *this, double level) {
-    printf("%lf\n", this->max_vol);
     int index = (level * 0xFF) / this->max_vol;
     return index * 0x010101;
 }
@@ -87,7 +86,7 @@ void print_arr(uint32_t *arr) {
     for (int i = 0; i < 64; ++i) {
         printf("%X,", arr[i]);
     }
-    printf("\n");
+    printf("]\n");
 }
 
 void print_arrd(double *arr) {
@@ -95,7 +94,7 @@ void print_arrd(double *arr) {
     for (int i = 0; i < 64; ++i) {
         printf("%lf,", arr[i]);
     }
-    printf("\n");
+    printf("]\n");
 }
 
 void print_arrc(double complex *arr) {
@@ -103,7 +102,7 @@ void print_arrc(double complex *arr) {
     for (int i = 0; i < 64; ++i) {
         printf("%lf + %lfi, ", creal(arr[i]), cimag(arr[i]));
     }
-    printf("\n");
+    printf("]\n");
 }
 
 void update(state *this) {
@@ -122,7 +121,9 @@ void update(state *this) {
     // Perform the fast Fourier transform
     fftw_execute(this->plan);
 
+    #ifndef NDEBUG
     //print_arrc(this->data);
+    #endif
 
     if (this->data[0]) {
         // Get frequency data from the transformation
@@ -132,7 +133,9 @@ void update(state *this) {
             freqs[i - 1] = sqrt(pow(creal(freq), 2) + pow(cimag(freq), 2));
         }
 
+        #ifndef NDEBUG
         //print_arrd(freqs);
+        #endif
 
         double bar_data[BAR_SIZE];
         for (int i = 0; i < BAR_SIZE; ++i) {
@@ -161,8 +164,10 @@ void update(state *this) {
             }
         }
 
+        #ifndef NDEBUG
         printf("max_vol: %lf\n", this->max_vol);
         print_arrd(bar_data);
+        #endif
 
         // TODO: Just do this instead of building bar_data array?  Removes a
         // pass from the data
@@ -172,7 +177,10 @@ void update(state *this) {
             colors[i] = get_color(this, bar_data[i]);
         }
 
+        #ifndef NDEBUG
         print_arr(colors);
+        #endif
+
         set_custom(this->bar, colors, BAR_SIZE);
 
     } else if (this->max_vol > 1) {
