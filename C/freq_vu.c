@@ -189,7 +189,10 @@ void update(state *this) {
 
     } else if (this->max_vol > 1) {
         this->max_vol = 1;
-        lb_reset(this->bar);
+        // Zero out bar
+        for (int i = 0; i < BAR_SIZE; ++i) {
+            set_pixel(this->bar, i, 0);
+        }
     }
 }
 
