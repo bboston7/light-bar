@@ -76,12 +76,13 @@ double sum(double *arr, int mindex, int maxdex) {
 /**
  * Get the appropriate color for the level
  */
-uint32_t get_color(state *this, double level) {
+uint8_t get_color(state *this, double level) {
     int index = (level * 0xFF) / this->max_vol;
-    return index * 0x010101;
+    return index;
+    //return index * 0x010101;
 }
 
-void print_arr(uint32_t *arr) {
+void print_arr(uint8_t *arr) {
     printf("[");
     for (int i = 0; i < 64; ++i) {
         printf("%X,", arr[i]);
@@ -173,16 +174,18 @@ void update(state *this) {
         // TODO: Just do this instead of building bar_data array?  Removes a
         // pass from the data
         // Build color array
-        uint32_t colors[BAR_SIZE];
+        //uint8_t colors[BAR_SIZE];
         for (int i = 0; i < BAR_SIZE; ++i) {
-            colors[i] = get_color(this, bar_data[i]);
+            //colors[i] = get_color(this, bar_data[i]);
+            uint8_t color = get_color(this, bar_data[i]);
+            set_pixel(this->bar, i, color);
         }
 
         #ifndef NDEBUG
-        print_arr(colors);
+        //print_arr(colors);
         #endif
 
-        set_custom(this->bar, colors, BAR_SIZE);
+        //set_custom(this->bar, colors, BAR_SIZE);
 
     } else if (this->max_vol > 1) {
         this->max_vol = 1;

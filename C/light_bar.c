@@ -113,6 +113,14 @@ light_bar set_solid(light_bar fd, uint32_t color) {
 
 light_bar set_custom(light_bar fd, uint32_t *colors, size_t size) {
     lb_write(fd, &CUSTOM, 4);
-    lb_write(fd, colors, 4 * size);
+    for (size_t i = 0; i < size; ++i) {
+        lb_write(fd, colors + i, 4);
+    }
+    return fd;
+}
+
+light_bar set_pixel(light_bar fd, uint8_t pixel, uint8_t brightness) {
+    lb_write(fd, &pixel, 1);
+    lb_write(fd, &brightness, 1);
     return fd;
 }

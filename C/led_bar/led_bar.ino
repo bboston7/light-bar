@@ -11,8 +11,6 @@
 
 int numberLEDS = 64;
 
-int numSeen = 0;
-
 int dataPin  = 2;
 int clockPin = 7;
 
@@ -38,7 +36,7 @@ void setup() {
 }
 
 void loop() {
-  int option = getLong();
+  uint32_t option = getLong();
   if (option == RESET)
     reset();      
   else if (option == SOLID){
@@ -47,8 +45,8 @@ void loop() {
     
   }
   else if (option == PROGRESS) {
-    int num = getLong();
-    int denom = getLong();
+    uint32_t num = getLong();
+    uint32_t denom = getLong();
     setProgress(num, denom);
   } else if (option == RANDOM)
     setRandom();
@@ -83,8 +81,8 @@ void reset() {
  * @param denom the denominator of the fraction
  */
 void setProgress(uint32_t num, uint32_t denom) {
-  int color = num * 127 / denom;
-  int progress = num * 64 / denom;
+  uint32_t color = num * 127 / denom;
+  uint32_t progress = num * 64 / denom;
   for (int i = 0; i < strip.numPixels(); i++) {
     int pixel = REVERSE_STRIP ? (strip.numPixels() - 1) - i : i;
     if (i < progress) {

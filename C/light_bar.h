@@ -70,3 +70,15 @@ light_bar set_solid(light_bar fd, uint32_t color);
  *
  */
 light_bar set_custom(light_bar fd, uint32_t *colors, size_t size);
+
+/**
+ * Set a pixel on the lightbar to be white with a specific brightness
+ *
+ * Parameters
+ *     fd         - light bar to alter
+ *     pixel      - pixel to set
+ *     brightness - how bright pixel should be set to
+ * Returns
+ *     fd
+ */
+light_bar set_pixel(light_bar fd, uint8_t pixel, uint8_t brightness);
