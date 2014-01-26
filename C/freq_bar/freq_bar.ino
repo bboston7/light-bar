@@ -37,6 +37,9 @@ void setup() {
 
 void loop() {
   uint8_t index = getByte();
+  if (index >= strip.numPixels())
+    // ERROR, out of sync
+    index = getByte();
   uint8_t degree = getByte();
 
   uint8_t pixel = REVERSE_STRIP ? (strip.numPixels() - 1) - index : index;
