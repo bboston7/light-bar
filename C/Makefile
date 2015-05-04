@@ -3,7 +3,7 @@ CFLAGS = -g -Wall -std=gnu11
 
 all: clear freq_vu prog_test solid_white
 
-fast: CFLAGS += -O2 -D NDEBUG
+fast: CFLAGS += -O3 -march=native -D NDEBUG
 fast: all
 
 clear: clear.c light_bar.o

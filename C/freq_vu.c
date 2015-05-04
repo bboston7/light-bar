@@ -23,6 +23,11 @@ static const double MIN_LIN_FREQ = log2(MIN_FREQ);
 
 #define FUDGE_RANGE true
 
+// Square volume levels to better match human perception of loudness
+#define SQUARE_LEVEL
+// Decay the max volume after each iteration
+#define DECAY_MAX_VOL
+
 typedef struct {
     light_bar bar;
     double max_vol;
@@ -120,6 +125,10 @@ void update(state *this) {
         this->data[i] = csample;
     }
 
+    #ifdef DECAY_MAX_VOL
+    this->max_vol *= 0.99;
+    #endif
+
     // Perform the fast Fourier transform
     fftw_execute(this->plan);
 
@@ -160,6 +169,10 @@ void update(state *this) {
                 }
                 level = level - LEVEL_FILTER;
                 if (level < 0) level = 0;
+                #ifdef SQUARE_LEVEL
+                if (level > 0) level = pow(level, 2);
+                if (level > 1000) printf("%lf\n", level);
+                #endif
                 if (level > this->max_vol) this->max_vol = level;
                 bar_data[i] = level;
                 //bar_data[i] = level >= LEVEL_FILTER ? level : 0;
