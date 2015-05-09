@@ -171,7 +171,6 @@ void update(state *this) {
                 if (level < 0) level = 0;
                 #ifdef SQUARE_LEVEL
                 if (level > 0) level = pow(level, 2);
-                if (level > 1000) printf("%lf\n", level);
                 #endif
                 if (level > this->max_vol) this->max_vol = level;
                 bar_data[i] = level;
